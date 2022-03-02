@@ -37,7 +37,7 @@ provider:
 nginx_https:
   name: "nginx-https"
   enable: false
-  domain_name: "alfalfa.commercialbuildings.dev"
+  domain_name: ""
 
 tags:
   log_stack: false
