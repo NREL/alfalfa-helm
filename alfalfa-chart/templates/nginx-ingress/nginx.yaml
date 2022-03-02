@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{  .Values.nginx_ingress.name  }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{  .Values.nginx_ingress.name  }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{  .Values.nginx_ingress.name  }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{  .Values.nginx_ingress.name  }}
+          image: {{  .Values.nginx_ingress.container.image  }}
+          resources:
+            requests:
+              cpu:  {{  .Values.mongo.container.resources.requests.cpu  }}
+              memory:  {{  .Values.mongo.container.resources.requests.memory  }}
+            limits:
+              cpu:  {{  .Values.mongo.container.resources.limits.cpu  }}
+              memory:  {{  .Values.mongo.container.resources.limits.memory  }}
+          env:
+            - name: CLIENT_APP_HOSTNAME
+              value: {{ .Values.nginx_https.domain_name  }}
+          volumeMounts:
+            - name: {{  .Values.nginx_ingress.name  }}
+              mountPath: /etc/nginx/conf.d/alfalfa-web.conf
+              subPath: alfalfa-web.conf
+            - name: {{  .Values.nginx_ingress.name  }}
+              mountPath: /etc/nginx/conf.d/alfalfa-minio.conf
+              subPath: alfalfa-minio.conf
+            - name: {{  .Values.nginx_ingress.name  }}
+              mountPath: /etc/nginx/conf.d/alfalfa-kibana.conf
+              subPath: alfalfa-kibana.conf
+            - name: {{  .Values.nginx_ingress.name  }}
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            - name: {{  .Values.nginx_ingress.name  }}
+              mountPath: /etc/nginx/conf.d/alfalfa-dashboard.conf
+              subPath: alfalfa-dashboard.conf
+            - name: alfalfa-tls-secrets
+              mountPath: /srv/alfalfa/secrets
+              readOnly: true
+            - name: {{ .Values.certbot.name }}
+              mountPath: /etc/letsencrypt/webroot
+              readOnly: true
+              {{ if .Values.nginx_https.enable}}
+            - name: {{ .Values.nginx_https.name }}
+              mountPath: /etc/nginx/conf.d/alfalfa-web-https.conf
+              subPath: alfalfa-web-https.conf
+              {{ end }}
+
+      volumes:
+        - name: {{  .Values.nginx_ingress.name  }}
+          configMap:
+            name: {{  .Values.nginx_ingress.name  }}
+        {{ if .Values.nginx_https.enable}}
+        - name: {{  .Values.nginx_https.name  }}
+          configMap:
+            name: {{  .Values.nginx_https.name  }}
+        {{ end }}
+        - name: {{ .Values.certbot.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.certbot.name }}
+        - name: alfalfa-tls-secrets
+          secret:
+            secretName: tls

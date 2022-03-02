@@ -1,0 +1,267 @@
+# Default values for alfalfa.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+secret:
+  name: "aws-secrets"
+
+env:
+  public:
+    JOB_QUEUE_URL: http://goaws:4100/queue/local-queue1
+    JOB_QUEUE_URL_1: http://goaws:4100/queue/local-queue1
+    JOB_QUEUE_URL_2: http://goaws:4100/queue/local-queue2
+    MONGO_URL: mongodb://mongo:27017/
+    MONGO_DB_NAME: alfalfa
+    LOGLEVEL: INFO
+    NODE_ENV: production
+    S3_URL: http://minio:9000
+    REDIS_HOST: redis
+    S3_BUCKET: alfalfa
+    REGION: us-west-1
+    alfalfa_SUBMIT_URL: http://web
+    INFLUXDB_DB: alfalfa
+    INFLUXDB_HOST: influxdb
+
+  private:
+    AWS_ACCESS_KEY_ID: user
+    AWS_SECRET_ACCESS_KEY: password
+    INFLUXDB_ADMIN_USER: admin
+    INFLUXDB_ADMIN_PASSWORD: password
+    HISTORIAN_ENABLE: true
+
+# Set to google, aws or azure
+# Default to aws
+provider: 
+  name: "aws"
+
+nginx_https:
+  name: "nginx-https"
+  enable: false
+  domain_name: "alfalfa.commercialbuildings.dev"
+
+tags:
+  log_stack: false
+
+cluster:
+  name: "alfalfa" 
+
+mongo:
+  name:  "mongo"
+  label: "mongo"
+  container:
+    name: "mongo"
+    image: "mongo:4.4"
+    resources:
+      limits:
+        cpu: 0.5
+        memory: "1Gi"
+      requests:
+        cpu: 0.25
+        memory: "512Mi"
+    ports:
+      db_port: 27017
+  persistence:
+    enabled: true
+    storageClass: "ssd"
+    size: 10Gi
+    accessModes:
+      - "ReadWriteOnce"
+
+certbot:
+  name:  "certbot"
+  label: "certbot"
+  container:
+    name: "certbot"
+    image: "certbot/certbot"
+    resources:
+      limits:
+        cpu: 0.25
+        memory: "512Mi"
+      requests:
+        cpu: 0.1
+        memory: "256Mi"
+  persistence:
+    enabled: true
+    storageClass: "ssd"
+    size: 1Gi
+    accessModes:
+      - "ReadWriteOnce"
+
+load_balancer:
+  name: "ingress-load-balancer"
+  externalTrafficPolicy: "Local"
+  label: "nginx-ingress"
+  ports:
+    http_name: "http" 
+    http_port: 80
+    http_protocol: "TCP"
+    https_name: "https"
+    https_port: 443
+    https_protocol: "TCP"
+    sns_name: "sns" 
+    sns_port: 9000
+    sns_protocol: "TCP"
+    kibana_name: "kibana"
+    kibana_port: 5601
+    kibana_protocol: "TCP"
+    dashboard_name: "dashboard"
+    dashboard_port: 8081
+    dashboard_protocol: "TCP"
+  loadBalancerSourceRanges: 0.0.0.0/0
+
+nginx_ingress:
+  name: "nginx-ingress"
+  label: "nginx-ingress"
+  container:
+    name: "nginx-ingress"
+    image: "nginx:1.17.8"
+    resources:
+      limits:
+        cpu: 0.25
+        memory: "1Gi"
+      requests:
+        cpu: 0.1
+        memory: "256Mi"
+
+redis:
+  name: "redis"
+  label: "redis"
+  container:
+    name: "redis"
+    image: "redis:4.0.6"
+    resources:
+      limits:
+        cpu: 1
+        memory: "2Gi"
+      requests:
+        cpu: 0.5
+        memory: "1Gi"
+    ports:
+      redis: 6379
+
+goaws:
+  name: "goaws"
+  label: "goaws"
+  container:
+    name: "goaws"
+    image: "pafortin/goaws"
+    resources:
+      limits:
+        cpu: 0.5
+        memory: "512Mi"
+      requests:
+        cpu: 0.25
+        memory: "256Mi"
+    ports:
+      sns: 4100
+
+minio:
+  name: "minio"
+  label: "minio"
+  container:
+    name: "minio"
+    image: "minio/minio"
+    resources:
+      limits:
+        cpu: 0.5
+        memory: "1Gi"
+      requests:
+        cpu: 0.25
+        memory: "256Mi"
+    ports:
+      s3: 9000
+  persistence:
+    enabled: true
+    storageClass: "ssd"
+    size: 100Gi
+    accessModes:
+      - "ReadWriteOnce"
+
+mc:
+  name: "mc"
+  label: "mc"
+  container:
+    name: "mc"
+    image: "minio/mc"
+    resources:
+      limits:
+        cpu: 0.25
+        memory: "512Mi"
+      requests:
+        cpu: 0.1
+        memory: "256Mi"
+    ports:
+      s3: 9000
+
+web:
+  name: "web"
+  label: "web"
+  container:
+    name: "web"
+    image: "nrel/alfalfa-web:develop"
+    resources:
+      limits:
+        cpu: 1
+        memory: "3Gi"
+      requests:
+        cpu: 0.5
+        memory: "1Gi"
+    ports:
+      http: 80
+      test: 29043
+
+nginx_dashboard:
+  name: "nginx-dashboard"
+  label: "nginx-dashboard"
+  container:
+    name: "nginx-dashboard"
+    image: "nginx:1.17.8"
+    resources:
+      limits:
+        cpu: 0.25
+        memory: "1Gi"
+      requests:
+        cpu: 0.1
+        memory: "256Mi"
+    ports:
+      http: 8081
+
+worker:
+  name: "worker" 
+  label: "worker" 
+  replicas: 2
+  container:
+    name: "worker"
+    image: "nrel/alfalfa-worker:develop"
+    resources:
+      limits:
+        cpu: 1
+        memory: "4Gi"
+      requests:
+        cpu: 0.5
+        memory: "1Gi"
+    terminationGracePeriodSeconds: 3600
+
+
+elastic_job:
+  name: "elastic-job"
+  label: "elastic-job"
+  container:
+    name: "elastic-job"
+    image: "elasticdump/elasticsearch-dump"
+    resources:
+      limits:
+        cpu: 0.25
+        memory: "512Mi"
+      requests:
+        cpu: 0.1
+        memory: "256Mi"
+
+
+elasticsearch:
+  replicas: 1
+  persistence:
+    enabled: true
+  esConfig:
+    elasticsearch.yml: |
+      xpack.security.enabled: false

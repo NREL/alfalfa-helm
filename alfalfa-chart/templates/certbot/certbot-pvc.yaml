@@ -1,0 +1,11 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Values.certbot.name  }}
+spec:
+  storageClassName: {{ .Values.certbot.persistence.storageClass }}
+  accessModes:
+    {{ .Values.certbot.persistence.accessModes }}
+  resources:
+    requests:
+      storage:  {{ .Values.certbot.persistence.size }}

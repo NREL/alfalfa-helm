@@ -1,0 +1,8 @@
+{{ if .Values.nginx_https.enable }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.nginx_https.name}}
+data:
+{{ (tpl (.Files.Glob "configmaps/nginx-ingress-https/*").AsConfig . ) | indent 2  }}
+{{ end }}

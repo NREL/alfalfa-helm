@@ -1,0 +1,11 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Values.minio.name  }}
+spec:
+  storageClassName: {{ .Values.minio.persistence.storageClass }}
+  accessModes:
+    {{ .Values.minio.persistence.accessModes }}
+  resources:
+    requests:
+      storage:  {{ .Values.minio.persistence.size }}
