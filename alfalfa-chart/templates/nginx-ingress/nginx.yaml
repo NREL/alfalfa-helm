@@ -40,12 +40,6 @@ spec:
             - name: {{  .Values.nginx_ingress.name  }}
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
-            - name: {{  .Values.nginx_ingress.name  }}
-              mountPath: /etc/nginx/conf.d/alfalfa-dashboard.conf
-              subPath: alfalfa-dashboard.conf
-            - name: alfalfa-tls-secrets
-              mountPath: /srv/alfalfa/secrets
-              readOnly: true
             - name: {{ .Values.certbot.name }}
               mountPath: /etc/letsencrypt/webroot
               readOnly: true
@@ -54,7 +48,6 @@ spec:
               mountPath: /etc/nginx/conf.d/alfalfa-web-https.conf
               subPath: alfalfa-web-https.conf
               {{ end }}
-
       volumes:
         - name: {{  .Values.nginx_ingress.name  }}
           configMap:
@@ -67,6 +60,4 @@ spec:
         - name: {{ .Values.certbot.name }}
           persistentVolumeClaim:
             claimName: {{ .Values.certbot.name }}
-        - name: alfalfa-tls-secrets
-          secret:
-            secretName: tls
+
