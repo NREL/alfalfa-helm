@@ -60,6 +60,8 @@ spec:
               value: {{ .Values.env.public.MONGO_DB_NAME }}
             - name: S3_URL
               value: {{ .Values.env.public.S3_URL }}
+            - name: S3_URL_EXTERNAL
+              value: {{ .Values.env.public.S3_URL_EXTERNAL }}
             - name: REDIS_HOST
               value: {{ .Values.env.public.REDIS_HOST }}
             - name: S3_BUCKET

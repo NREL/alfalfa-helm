@@ -12,22 +12,22 @@ env:
     JOB_QUEUE_URL_2: http://goaws:4100/queue/local-queue2
     MONGO_URL: mongodb://mongo:27017/
     MONGO_DB_NAME: alfalfa
-    LOGLEVEL: INFO
+    LOGLEVEL: DEBUG
     NODE_ENV: production
     S3_URL: http://minio:9000
+    S3_URL_EXTERNAL: http://a23f8a5a6ac314fa9957748974fa2ec1-1734963355.us-west-2.elb.amazonaws.com:9000
     REDIS_HOST: redis
     S3_BUCKET: alfalfa
     REGION: us-west-1
-    alfalfa_SUBMIT_URL: http://web
     INFLUXDB_DB: alfalfa
     INFLUXDB_HOST: influxdb
+    INFLUXDB_HTTP_AUTH_ENABLED: true
 
   private:
     AWS_ACCESS_KEY_ID: user
     AWS_SECRET_ACCESS_KEY: password
     INFLUXDB_ADMIN_USER: admin
     INFLUXDB_ADMIN_PASSWORD: password
-    HISTORIAN_ENABLE: "true"
 
 # Set to google, aws or azure
 # Default to aws
@@ -50,7 +50,7 @@ mongo:
   label: "mongo"
   container:
     name: "mongo"
-    image: "mongo:4.4"
+    image: "mongo"
     resources:
       limits:
         cpu: 0.5
@@ -95,6 +95,9 @@ load_balancer:
     http_name: "http" 
     http_port: 80
     http_protocol: "TCP"
+    http_test_name: "http-test" 
+    http_test_port: 29043
+    http_test_protocol: "TCP"
     https_name: "https"
     https_port: 443
     https_protocol: "TCP"
@@ -198,7 +201,7 @@ web:
   label: "web"
   container:
     name: "web"
-    image: "nrel/alfalfa-web:develop"
+    image: "nrel/alfalfa-web:0.1.0"
     resources:
       limits:
         cpu: 1
@@ -232,7 +235,7 @@ worker:
   replicas: 2
   container:
     name: "worker"
-    image: "nrel/alfalfa-worker:develop"
+    image: "nrel/alfalfa-worker:0.1.0"
     resources:
       limits:
         cpu: 1

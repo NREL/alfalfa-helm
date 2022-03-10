@@ -12,6 +12,9 @@ spec:
     - name: {{ .Values.load_balancer.ports.http_name }}
       protocol: {{ .Values.load_balancer.ports.http_protocol }} 
       port: {{ .Values.load_balancer.ports.http_port }}
+    - name: {{ .Values.load_balancer.ports.http_test_name }}
+      protocol: {{ .Values.load_balancer.ports.http_test_protocol }} 
+      port: {{ .Values.load_balancer.ports.http_test_port }}
     - name: {{ .Values.load_balancer.ports.https_name }}
       protocol:  {{ .Values.load_balancer.ports.https_protocol }}
       port:   {{ .Values.load_balancer.ports.https_port }}
