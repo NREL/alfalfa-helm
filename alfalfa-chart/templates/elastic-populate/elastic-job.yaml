@@ -29,8 +29,8 @@ spec:
           - |
             apt-get update
             apt-get install -y curl
-            curl -SLO https://alfalfa-resources.s3.us-west-2.amazonaws.com/elasticsearch-data/kibana_data.json
-            curl -SLO https://alfalfa-resources.s3.us-west-2.amazonaws.com/elasticsearch-data/kibana_mapping.json
+            curl -SLO https://boptest-resources.s3.us-west-2.amazonaws.com/elasticsearch-data/kibana_data.json
+            curl -SLO https://boptest-resources.s3.us-west-2.amazonaws.com/elasticsearch-data/kibana_mapping.json
             elasticdump --input=kibana_mapping.json --output=http://elasticsearch-master:9200/.kibana  --type=mapping
             elasticdump --input=kibana_data.json --output=http://elasticsearch-master:9200/.kibana  --type=data
       restartPolicy: Never
