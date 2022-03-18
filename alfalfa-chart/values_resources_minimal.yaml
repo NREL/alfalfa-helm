@@ -59,7 +59,7 @@ mongo:
         memory: "1Gi"
       requests:
         cpu: 0.25
-        memory: "512Mi"
+        memory: "256Mi"
     ports:
       db_port: 27017
   persistence:
@@ -137,10 +137,10 @@ redis:
     resources:
       limits:
         cpu: 1
-        memory: "2Gi"
+        memory: "1Gi"
       requests:
         cpu: 0.5
-        memory: "1Gi"
+        memory: "256Mi"
     ports:
       redis: 6379
 
@@ -210,7 +210,7 @@ web:
         memory: "3Gi"
       requests:
         cpu: 0.5
-        memory: "1Gi"
+        memory: "512Mi"
     ports:
       http: 80
       test: 29043
@@ -244,7 +244,7 @@ worker:
         memory: "4Gi"
       requests:
         cpu: 0.5
-        memory: "1Gi"
+        memory: "512Mi"
     terminationGracePeriodSeconds: 3600
 
 
@@ -262,17 +262,22 @@ elastic_job:
         cpu: 0.1
         memory: "256Mi"
 
+
 elasticsearch:
   resources:
     requests:
-      cpu: "100m"
-      memory: "512M"
+      cpu: "1000m"
+      memory: "512Mi"
     limits:
       cpu: "1000m"
-      memory: "2Gi"      
+      memory: "2Gi"
   replicas: 1
+  minimumMasterNodes: 1
+  # https://github.com/elastic/helm-charts/issues/783
+  clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
   persistence:
     enabled: true
   esConfig:
     elasticsearch.yml: |
       xpack.security.enabled: false
+      ingest.geoip.downloader.enabled: false
