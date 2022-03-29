@@ -18,6 +18,9 @@ parameters:
   kind: Managed
   storageaccounttype: StandardSSD_LRS
 {{ end }}
+{{ if eq .Values.provider.name "docker-local" }}
+provisioner: docker.io/hostpath
+{{ end }}
 reclaimPolicy: Delete
 mountOptions:
   - debug
