@@ -34,7 +34,7 @@ env:
 provider: 
   name: "aws"
 
-domain_name: "localhost"
+domain_name: ""
 
 nginx_https:
   name: "nginx-https"
