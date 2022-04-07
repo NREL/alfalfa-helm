@@ -203,7 +203,7 @@ web:
   label: "web"
   container:
     name: "web"
-    image: "nrel/alfalfa-web:0.1.0"
+    image: "nrel/alfalfa-web:0.2.0"
     resources:
       limits:
         cpu: 1
@@ -237,7 +237,7 @@ worker:
   replicas: 2
   container:
     name: "worker"
-    image: "nrel/alfalfa-worker:0.1.0"
+    image: "nrel/alfalfa-worker:0.2.0"
     resources:
       limits:
         cpu: 1
