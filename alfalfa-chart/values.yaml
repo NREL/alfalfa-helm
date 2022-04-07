@@ -15,7 +15,7 @@ env:
     LOGLEVEL: DEBUG
     NODE_ENV: production
     S3_URL: http://minio:9000
-    S3_URL_EXTERNAL: http://127.0.0.1:9000
+    S3_URL_EXTERNAL: http://ae7219a17bb69440bb479e2fa5c00e41-1852833633.us-west-2.elb.amazonaws.com:9000
     REDIS_HOST: redis
     S3_BUCKET: alfalfa
     REGION: us-west-1
@@ -203,7 +203,7 @@ web:
   label: "web"
   container:
     name: "web"
-    image: "nrel/alfalfa-web:0.1.0"
+    image: "nrel/alfalfa-web:0.2.0"
     resources:
       limits:
         cpu: 1
@@ -237,7 +237,7 @@ worker:
   replicas: 2
   container:
     name: "worker"
-    image: "nrel/alfalfa-worker:0.1.0"
+    image: "nrel/alfalfa-worker:0.2.0"
     resources:
       limits:
         cpu: 1
