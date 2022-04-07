@@ -15,7 +15,9 @@ env:
     LOGLEVEL: DEBUG
     NODE_ENV: production
     S3_URL: http://minio:9000
-    S3_URL_EXTERNAL: http://ae7219a17bb69440bb479e2fa5c00e41-1852833633.us-west-2.elb.amazonaws.com:9000
+    S3_URL_EXTERNAL: http://localhost:9000
+    #S3_URL_EXTERNAL: AWS S3 end point url example below. See docs on obtaining url using kubectl 
+    #S3_URL_EXTERNAL: http://ae7219a17bb69440bb479e2fa5c00e41-1852833633.us-west-2.elb.amazonaws.com:9000
     REDIS_HOST: redis
     S3_BUCKET: alfalfa
     REGION: us-west-1
