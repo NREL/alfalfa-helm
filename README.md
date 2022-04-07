@@ -147,8 +147,8 @@ mongo.persistence.size | Size of the volume for MongoDB | 10Gi |
 mongo.persistence.size | Size of the volume for MongoDB | 10Gi |
 minio.persistence.size | Size of the volume for Minio | 100Gi |
 worker.replicas | Number of worker pods that run the simulations | 2 |
-web.container.image   | Container to run the web front-end. Can use a custom image to override default | nrel/alfalfa-web |
-worker.container.image   | Container to run the worker. Can use a custom image to override default | nrel/alfalfa-worker |
+web.container.image   | Container to run the web front-end. Can use a custom image to override default | nrel/alfalfa-web:0.2.0 |
+worker.container.image   | Container to run the worker. Can use a custom image to override default | nrel/alfalfa-worker:0.2.0 |
 
 
 ## Accessing alfalfa
