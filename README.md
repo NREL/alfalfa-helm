@@ -94,17 +94,19 @@ Once you obtain the public IP, you will need to create an A record for your doma
 
 Once the A record is created and available via DNS query, you can create the certificates and then enable https. See step 4. 
 
-4 ) run the commands below to exec into the certbot container and create the certificates. 
+4 ) run the commands below to exec into the nginx-ingress container to create the certificates. 
 
-First get the certbot \<pod-id> 
+First get the nginx-ingress \<pod-id> 
 ```
-kubectl get po | grep certbot
-certbot-6df4b786c-jvm2g          1/1     Running     0          14m    0          3d23h
+kubectl get po | grep nginx-ingress
+nginx-ingress-6df4b786c-jvm2g          2/2     Running     0          14m    0          3d23h
 ```
  
  You can run the command below to generate the certificates.
 
- `kubectl exec -it <certbot-pod-id> certbot  certonly --webroot --webroot-path=/etc/letsencrypt/webroot -d myalfalfa.net` 
+`kubectl exec -it <nginx-ingress-id> -c nginx-ingress -- mkdir /etc/letsencrypt/webroot`
+
+ `kubectl exec -it <nginx-ingress-id> -c certbot -- certbot  certonly --webroot --webroot-path=/etc/letsencrypt/webroot -d myalfalfa.net` 
  
  Certbot will ask for a few questions such as your email address. Answer those and then the ACME challenge will start, and if all goes well, it will generate certs that you can use to enable https.  *Note* if you changed the default value of: 
 `loadBalancerSourceRanges: 0.0.0.0/0` and set this to a restricted CIDR, you will need to change this back to `0.0.0.0/0` so the certificate authority can access and perform the ACME challenge. After this is complete, you can change the value back to your preferred setting. 
@@ -147,8 +149,8 @@ mongo.persistence.size | Size of the volume for MongoDB | 10Gi |
 mongo.persistence.size | Size of the volume for MongoDB | 10Gi |
 minio.persistence.size | Size of the volume for Minio | 100Gi |
 worker.replicas | Number of worker pods that run the simulations | 2 |
-web.container.image   | Container to run the web front-end. Can use a custom image to override default | nrel/alfalfa-web |
-worker.container.image   | Container to run the worker. Can use a custom image to override default | nrel/alfalfa-worker |
+web.container.image   | Container to run the web front-end. Can use a custom image to override default | nrel/alfalfa-web:0.2.0 |
+worker.container.image   | Container to run the worker. Can use a custom image to override default | nrel/alfalfa-worker:0.2.0 |
 
 
 ## Accessing alfalfa
