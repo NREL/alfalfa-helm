@@ -40,7 +40,7 @@ domain_name: "aws-test.boptest.net"
 
 nginx_https:
   name: "nginx-https"
-  enable: true
+  enable: false
   domain_name: "aws-test.boptest.net"
 
 tags:
