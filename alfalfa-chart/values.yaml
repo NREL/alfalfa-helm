@@ -283,3 +283,30 @@ elasticsearch:
        xpack.security.enabled: false
        ingest.geoip.downloader.enabled: false
 
+
+filebeat:
+  extraVolumeMounts: 
+    - name: varlibdockeroverlay2
+      mountPath: /var/lib/dockeroverlay2
+      readOnly: true
+  extraVolumes: 
+    - hostPath:
+        path: /var/lib/docker/overlay2
+        #type: ""
+      name: varlibdockeroverlay2
+  filebeatConfig:
+    filebeat.yml: |
+      filebeat.inputs:
+      - type: container
+        paths:
+          - /var/lib/docker/containers/*/*.log
+          - /var/lib/docker/overlay2/*/*matlab.log
+        processors:
+        - add_kubernetes_metadata:
+            host: ${NODE_NAME}
+            matchers:
+            - logs_path:
+                logs_path: "/var/log/containers/"
+      output.elasticsearch:
+        host: '${NODE_NAME}'
+        hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
