@@ -15,7 +15,7 @@ env:
     LOGLEVEL: DEBUG
     NODE_ENV: production
     S3_URL: http://minio:9000
-    S3_URL_EXTERNAL: http://a7ab0d31db18b4f05a69a05aa91fc2e5-555540432.us-west-2.elb.amazonaws.com:9000
+    S3_URL_EXTERNAL: http://aac08533d607142989d84f46274c1b1c-1063895820.us-west-2.elb.amazonaws.com:9000
     #S3_URL_EXTERNAL: AWS S3 end point url example below. See docs on obtaining url using kubectl 
     #S3_URL_EXTERNAL: http://ae7219a17bb69440bb479e2fa5c00e41-1852833633.us-west-2.elb.amazonaws.com:9000
     REDIS_HOST: redis
@@ -36,12 +36,12 @@ env:
 provider: 
   name: "aws"
 
-domain_name: "aws-test.boptest.net"
+domain_name: "localhost"
 
 nginx_https:
   name: "nginx-https"
   enable: false
-  domain_name: "aws-test.boptest.net"
+  domain_name: "localhost"
 
 tags:
   log_stack: false
@@ -287,26 +287,37 @@ elasticsearch:
 filebeat:
   extraVolumeMounts: 
     - name: varlibdockeroverlay2
-      mountPath: /var/lib/dockeroverlay2
+      mountPath: /var/lib/docker/overlay2
       readOnly: true
   extraVolumes: 
     - hostPath:
         path: /var/lib/docker/overlay2
-        #type: ""
       name: varlibdockeroverlay2
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "100Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2000Mi"
   filebeatConfig:
     filebeat.yml: |
       filebeat.inputs:
       - type: container
         paths:
-          - /var/lib/docker/containers/*/*.log
-          - /var/lib/docker/overlay2/*/*matlab.log
+          - /var/log/containers/*.log
         processors:
         - add_kubernetes_metadata:
             host: ${NODE_NAME}
             matchers:
             - logs_path:
                 logs_path: "/var/log/containers/"
+      - type: filestream
+        scan_frequency: 60s
+        paths:
+          - /var/lib/docker/overlay2/*/diff/simulate/**/*
+        prospector.scanner.include_files: ['.*\.log', '.*\.err']
+     
       output.elasticsearch:
         host: '${NODE_NAME}'
         hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
