@@ -17,7 +17,7 @@ env:
     S3_URL: http://minio:9000
     S3_URL_EXTERNAL: http://minio:9000
     #AWS S3 end point url example below. See docs on obtaining url using kubectl 
-    #S3_URL_EXTERNAL: http://ae7219a17bb69440bb479e2fa5c00e41-1852833633.us-west-2.elb.amazonaws.com:9000
+    #S3_URL_EXTERNAL: http://a2ae11225785f4e16a8003bf119213f8-278346511.us-west-2.elb.amazonaws.com:9000
     REDIS_HOST: redis
     S3_BUCKET: alfalfa
     REGION: us-west-1
@@ -205,7 +205,7 @@ web:
   label: "web"
   container:
     name: "web"
-    image: "nrel/alfalfa-web:0.2.0"
+    image: "nrel/alfalfa-web:develop"
     resources:
       limits:
         cpu: 1
@@ -239,7 +239,7 @@ worker:
   replicas: 2
   container:
     name: "worker"
-    image: "nrel/alfalfa-worker:0.2.0"
+    image: "nrel/alfalfa-worker:develop"
     resources:
       limits:
         cpu: 1
@@ -317,7 +317,15 @@ filebeat:
         paths:
           - /var/lib/docker/overlay2/*/diff/simulate/**/*
         prospector.scanner.include_files: ['.*\.log', '.*\.err']
-     
+        processors:
+          - dissect:
+              tokenizer: "%{}/diff/%{filepath}"
+              field: "log.file.path"
+              target_prefix: "simlog"
+          - dissect:
+              tokenizer: "%{}/diff/simulate/%{id}/%{}"
+              field: "log.file.path"
+              target_prefix: "simlog"
       output.elasticsearch:
         host: '${NODE_NAME}'
         hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
