@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+spec:
+  rules:
+  - host: alfalfa-cbri.nrel.gov
+    http:
+      paths:
+      - backend:
+          serviceName: minio
+          servicePort: 9000
+        path: /
+        pathType: ImplementationSpecific

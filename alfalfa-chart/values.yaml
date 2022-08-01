@@ -14,8 +14,8 @@ env:
     MONGO_DB_NAME: alfalfa
     LOGLEVEL: DEBUG
     NODE_ENV: production
-    S3_URL: http://minio:9000
-    S3_URL_EXTERNAL: http://minio:9000
+    S3_URL: http://minio
+    S3_URL_EXTERNAL: https://alfalfa-cbri.nrel.gov 
     #AWS S3 end point url example below. See docs on obtaining url using kubectl 
     #S3_URL_EXTERNAL: http://a2ae11225785f4e16a8003bf119213f8-278346511.us-west-2.elb.amazonaws.com:9000
     REDIS_HOST: redis
@@ -66,7 +66,7 @@ mongo:
       db_port: 27017
   persistence:
     enabled: true
-    storageClass: "ssd"
+    storageClass: "netappnfs"
     size: 10Gi
     accessModes:
       - "ReadWriteOnce"
@@ -86,7 +86,7 @@ certbot:
         memory: "256Mi"
   persistence:
     enabled: true
-    storageClass: "ssd"
+    storageClass: "netappnfs"
     size: 1Gi
     accessModes:
       - "ReadWriteOnce"
@@ -177,10 +177,11 @@ minio:
         memory: "256Mi"
     ports:
       s3: 9000
+      web: 80
   persistence:
     enabled: true
-    storageClass: "ssd"
-    size: 100Gi
+    storageClass: "netappnfs"
+    size: 10Gi
     accessModes:
       - "ReadWriteOnce"
 
@@ -205,7 +206,7 @@ web:
   label: "web"
   container:
     name: "web"
-    image: "nrel/alfalfa-web:develop"
+    image: "nrel/alfalfa-web:0.3.0"
     resources:
       limits:
         cpu: 1
@@ -239,7 +240,7 @@ worker:
   replicas: 2
   container:
     name: "worker"
-    image: "nrel/alfalfa-worker:develop"
+    image: "nrel/alfalfa-worker:0.3.0"
     resources:
       limits:
         cpu: 1

@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: alfalfa-web
+spec:
+  rules:
+  - host: alfalfa.nrel.gov
+    http:
+      paths:
+      - backend:
+          serviceName: web
+          servicePort: 80
+        path: /
+        pathType: ImplementationSpecific
