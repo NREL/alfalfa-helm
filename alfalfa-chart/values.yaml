@@ -24,12 +24,15 @@ env:
     INFLUXDB_DB: alfalfa
     INFLUXDB_HOST: influxdb
     INFLUXDB_HTTP_AUTH_ENABLED: true
+    HISTORIAN_ENABLE: true
 
   private:
     AWS_ACCESS_KEY_ID: user
     AWS_SECRET_ACCESS_KEY: password
     INFLUXDB_ADMIN_USER: admin
     INFLUXDB_ADMIN_PASSWORD: password
+    GF_SECURITY_ADMIN_PASSWORD: password
+    GF_SECURITY_ADMIN_USER: admin
 
 # Set to google, aws, azure or docker-local
 # docker-local is the docker-desktop and used for local deployments
@@ -70,6 +73,44 @@ mongo:
     size: 10Gi
     accessModes:
       - "ReadWriteOnce"
+
+influxdb:
+  name:  "influxdb"
+  label: "influxdb"
+  container:
+    name: "influxdb"
+    image: "influxdb:1.8"
+    resources:
+      limits:
+        cpu: 1
+        memory: "2Gi"
+      requests:
+        cpu: 0.5
+        memory: "1G"
+    ports:
+      db_port: 8086
+  persistence:
+    enabled: true
+    storageClass: "netappnfs"
+    size: 10Gi
+    accessModes:
+      - "ReadWriteOnce"
+
+grafana:
+  name:  "grafana"
+  label: "grafana"
+  container:
+    name: "grafana"
+    image: "grafana/grafana:8.5.4"
+    resources:
+      limits:
+        cpu: 1
+        memory: "2Gi"
+      requests:
+        cpu: 0.5
+        memory: "1G"
+    ports:
+      grafana_port: 3000
 
 certbot:
   name:  "certbot"

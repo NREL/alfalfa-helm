@@ -81,3 +81,5 @@ spec:
               value: {{ .Values.env.public.INFLUXDB_DB }}
             - name: INFLUXDB_HOST
               value: {{ .Values.env.public.INFLUXDB_HOST }}
+            - name: HISTORIAN_ENABLE
+              value: {{ .Values.env.public.HISTORIAN_ENABLE | quote }}

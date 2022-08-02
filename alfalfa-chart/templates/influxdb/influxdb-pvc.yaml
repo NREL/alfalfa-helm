@@ -1,0 +1,11 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Values.influxdb.name  }}
+spec:
+  storageClassName: {{ .Values.influxdb.persistence.storageClass }}
+  accessModes:
+    {{ .Values.influxdb.persistence.accessModes }}
+  resources:
+    requests:
+      storage:  {{ .Values.influxdb.persistence.size }}
