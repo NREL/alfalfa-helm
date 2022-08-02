@@ -47,8 +47,8 @@ spec:
                   key:  INFLUXDB_ADMIN_PASSWORD
             - name: INFLUXDB_HTTP_AUTH_ENABLED
               value: {{ .Values.env.public.INFLUXDB_HTTP_AUTH_ENABLED | quote }}
-            - name: INFLUXDB_HOST
-              value: {{ .Values.env.public.INFLUXDB_HOST }}
+            - name: INFLUXDB_DB
+              value: {{ .Values.env.public.INFLUXDB_DB }}
       volumes:
         - name: {{ .Values.influxdb.name }}
           persistentVolumeClaim:

@@ -23,7 +23,9 @@ env:
     REGION: us-west-1
     INFLUXDB_DB: alfalfa
     INFLUXDB_HOST: influxdb
-    INFLUXDB_HTTP_AUTH_ENABLED: true
+    # Need to start influx with this disabled first and then 
+    # can set to true
+    INFLUXDB_HTTP_AUTH_ENABLED: false
     HISTORIAN_ENABLE: true
 
   private:
@@ -319,7 +321,7 @@ elasticsearch:
    # https://github.com/elastic/helm-charts/issues/783
    clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
    persistence:
-     enabled: true
+     enabled: false
    esConfig:
      elasticsearch.yml: |
        xpack.security.enabled: false
