@@ -1,4 +1,4 @@
-{{ if .public.Values.env.HISTORIAN_ENABLE }}
+{{ if .Values.env.public.HISTORIAN_ENABLE }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:

@@ -10,7 +10,7 @@ spec:
       paths:
       - backend:
           serviceName: {{ .Values.grafana.name }}
-          servicePort: {{ .Values.grafana.ports.grafana_port }}
+          servicePort: {{ .Values.grafana.container.ports.grafana_port }}
         path: /
         pathType: ImplementationSpecific
 {{ end }}

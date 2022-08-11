@@ -10,7 +10,7 @@ spec:
       paths:
       - backend:
           serviceName: {{ .Values.minio.name }}
-          servicePort: {{ .Values.minio.ports.s3 }}
+          servicePort: {{ .Values.minio.container.ports.s3 }}
         path: /
         pathType: ImplementationSpecific
 {{ end }}

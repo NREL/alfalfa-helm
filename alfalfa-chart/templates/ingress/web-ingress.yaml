@@ -10,7 +10,7 @@ spec:
       paths:
       - backend:
           serviceName: {{ .Values.web.name }}
-          servicePort: {{ .Values.web.ports.http }}
+          servicePort: {{ .Values.web.container.ports.http }}
         path: /
         pathType: ImplementationSpecific
 {{ end }}

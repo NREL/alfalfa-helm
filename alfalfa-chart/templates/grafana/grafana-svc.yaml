@@ -1,4 +1,4 @@
-{{ if .public.Values.env.HISTORIAN_ENABLE }}
+{{ if .Values.env.public.HISTORIAN_ENABLE }}
 apiVersion: v1
 kind: Service
 metadata:

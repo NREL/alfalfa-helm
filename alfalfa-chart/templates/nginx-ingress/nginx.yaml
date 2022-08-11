@@ -1,6 +1,6 @@
 # rancher has its own internal proxy 
 # nginx proxy is not needed for rancher deployments
-{{ if not eq .Values.provider.name "rancher" }}
+{{ if ne .Values.provider.name "rancher" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

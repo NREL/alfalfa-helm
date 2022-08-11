@@ -1,4 +1,4 @@
-{{ if .public.Values.env.HISTORIAN_ENABLE }}
+{{ if .Values.env.public.HISTORIAN_ENABLE }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
