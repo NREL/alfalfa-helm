@@ -1,3 +1,4 @@
+{{ if .public.Values.env.HISTORIAN_ENABLE }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -10,3 +11,4 @@ spec:
     - name: {{ .Values.influxdb.name  }}
       protocol: TCP
       port: {{ .Values.influxdb.container.ports.db_port }}
+{{ end }}

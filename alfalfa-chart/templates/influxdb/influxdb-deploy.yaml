@@ -1,3 +1,4 @@
+{{ if .public.Values.env.HISTORIAN_ENABLE }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -53,4 +54,4 @@ spec:
         - name: {{ .Values.influxdb.name }}
           persistentVolumeClaim:
             claimName: {{ .Values.influxdb.name }}
-
+{{ end}}

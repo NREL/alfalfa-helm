@@ -1,13 +1,16 @@
+{{ if eq .Values.provider.name "rancher" }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
+  name: {{ .Values.minio.name }}
 spec:
   rules:
-  - host: alfalfa-cbri.nrel.gov
+  - host:  {{ .Values.rancher.hostnames.minio }}
     http:
       paths:
       - backend:
-          serviceName: minio
-          servicePort: 9000
+          serviceName: {{ .Values.minio.name }}
+          servicePort: {{ .Values.minio.ports.s3 }}
         path: /
         pathType: ImplementationSpecific
+{{ end }}

@@ -2,15 +2,15 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ .Values.web.name }}
+  name: {{ .Values.grafana.name }}
 spec:
   rules:
-  - host: {{ .Values.rancher.hostnames.web }}
+  - host:  {{ .Values.rancher.hostnames.grafana }}
     http:
       paths:
       - backend:
-          serviceName: {{ .Values.web.name }}
-          servicePort: {{ .Values.web.ports.http }}
+          serviceName: {{ .Values.grafana.name }}
+          servicePort: {{ .Values.grafana.ports.grafana_port }}
         path: /
         pathType: ImplementationSpecific
 {{ end }}

@@ -41,6 +41,13 @@ env:
 provider: 
   name: "aws"
 
+# Specifc values for rancher deployments only
+rancher:
+  hostnames:
+    minio: "alfalfa-cbri.nrel.gov"
+    web: "alfalfa.nrel.gov"
+    grafana: "grafana-cbri.nrel.gov"
+
 domain_name: "localhost"
 
 nginx_https:
@@ -100,6 +107,7 @@ influxdb:
 
 grafana:
   name:  "grafana"
+  ingress_host: "grafana-cbri.nrel.gov"
   label: "grafana"
   container:
     name: "grafana"
@@ -329,6 +337,7 @@ elasticsearch:
 
 
 filebeat:
+  managedServiceAccount: false
   extraVolumeMounts: 
     - name: varlibdockeroverlay2
       mountPath: /var/lib/docker/overlay2
