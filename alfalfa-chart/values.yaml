@@ -61,6 +61,7 @@ tags:
 cluster:
   name: "alfalfa" 
 
+# rancher uses netappnfs for storageClass
 storageClass: "ssd"
 
 mongo:
