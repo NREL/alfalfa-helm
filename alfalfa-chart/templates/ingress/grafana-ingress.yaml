@@ -1,0 +1,16 @@
+{{ if eq .Values.provider.name "rancher" }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Values.grafana.name }}
+spec:
+  rules:
+  - host:  {{ .Values.rancher.hostnames.grafana }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.grafana.name }}
+          servicePort: {{ .Values.grafana.container.ports.grafana_port }}
+        path: /
+        pathType: ImplementationSpecific
+{{ end }}

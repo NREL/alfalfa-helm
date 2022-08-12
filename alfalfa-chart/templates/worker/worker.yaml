@@ -25,7 +25,7 @@ spec:
           command: ["/bin/sh", "-c", "for i in $(seq 1 300); do nc -zvw1 {{  .Values.mongo.name  }} {{ .Values.mongo.container.ports.db_port }} && exit 0 || sleep 3; done; exit 1"]
         - name: init-wait-for-minio
           image: alpine
-          command: ["/bin/sh", "-c", "for i in $(seq 1 300); do nc -zvw1 {{  .Values.minio.name  }} {{ .Values.minio.container.ports.s3  }} && exit 0 || sleep 3; done; exit 1"]
+          command: ["/bin/sh", "-c", "for i in $(seq 1 300); do nc -zvw1 {{  .Values.minio.name  }} {{ .Values.minio.container.ports.web  }} && exit 0 || sleep 3; done; exit 1"]
       containers:
         - name:  {{ .Values.worker.container.name  }}
           image: {{ .Values.worker.container.image  }}
@@ -81,3 +81,5 @@ spec:
               value: {{ .Values.env.public.INFLUXDB_DB }}
             - name: INFLUXDB_HOST
               value: {{ .Values.env.public.INFLUXDB_HOST }}
+            - name: HISTORIAN_ENABLE
+              value: {{ .Values.env.public.HISTORIAN_ENABLE | quote }}

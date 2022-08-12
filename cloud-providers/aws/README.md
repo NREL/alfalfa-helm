@@ -34,7 +34,6 @@ eksctl create cluster \
     --asg-access \
     --ssh-access \
     --ssh-public-key ~/.ssh/id_rsa.pub \
-    --zones=us-west-2a,us-west-2b,us-west-2d \
     --managed
 ```
 

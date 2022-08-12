@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
   name: {{ .Values.certbot.name  }}
 spec:
-  storageClassName: {{ .Values.certbot.persistence.storageClass }}
+  storageClassName: {{ .Values.storageClass }}
   accessModes:
     {{ .Values.certbot.persistence.accessModes }}
   resources:

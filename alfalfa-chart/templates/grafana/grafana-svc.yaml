@@ -1,0 +1,14 @@
+{{ if .Values.env.public.HISTORIAN_ENABLE }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.grafana.name  }}
+spec:
+  selector:
+    app: {{ .Values.grafana.label  }}
+    release: {{ .Release.Name }}
+  ports:
+    - name: {{ .Values.grafana.name  }}
+      protocol: TCP
+      port: {{ .Values.grafana.container.ports.grafana_port }}
+{{ end }}

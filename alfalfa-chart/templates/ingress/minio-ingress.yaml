@@ -1,0 +1,16 @@
+{{ if eq .Values.provider.name "rancher" }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Values.minio.name }}
+spec:
+  rules:
+  - host:  {{ .Values.rancher.hostnames.minio }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.minio.name }}
+          servicePort: {{ .Values.minio.container.ports.s3 }}
+        path: /
+        pathType: ImplementationSpecific
+{{ end }}

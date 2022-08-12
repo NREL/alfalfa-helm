@@ -10,7 +10,7 @@ spec:
       initContainers:
         - name: init-wait-for-minio
           image: alpine
-          command: ["/bin/sh", "-c", "for i in $(seq 1 300); do nc -zvw1 {{  .Values.minio.name }} {{ .Values.minio.container.ports.s3  }} && exit 0 || sleep 3; done; exit 1"]
+          command: ["/bin/sh", "-c", "for i in $(seq 1 300); do nc -zvw1 {{  .Values.minio.name }} {{ .Values.minio.container.ports.web  }} && exit 0 || sleep 3; done; exit 1"]
       containers:
         - name: {{  .Values.mc.container.name  }}
           image: {{  .Values.mc.container.image  }}
@@ -23,7 +23,7 @@ spec:
               memory:  {{  .Values.mc.container.resources.limits.memory  }}
           imagePullPolicy: "IfNotPresent"
           command: ["/bin/sh","-c"]
-          args: ["sleep 5; /usr/bin/mc config host add myminio http://minio:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY; /usr/bin/mc mb  myminio/alfalfa; /usr/bin/mc policy set public myminio/alfalfa" ]
+          args: ["sleep 5; /usr/bin/mc config host add myminio http://minio $MINIO_ACCESS_KEY $MINIO_SECRET_KEY; /usr/bin/mc mb  myminio/alfalfa; /usr/bin/mc policy set public myminio/alfalfa" ]
           env:
             - name: MINIO_ACCESS_KEY
               valueFrom:
