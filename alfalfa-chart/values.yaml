@@ -26,7 +26,7 @@ env:
     # Need to start influx with this disabled first and then 
     # can set to true
     INFLUXDB_HTTP_AUTH_ENABLED: false
-    HISTORIAN_ENABLE: true
+    HISTORIAN_ENABLE: false
 
   private:
     AWS_ACCESS_KEY_ID: user
