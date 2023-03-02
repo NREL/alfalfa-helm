@@ -1,31 +1,48 @@
-apiVersion: v1
-kind: Service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: {{ .Values.load_balancer.name  }}
+  name: ops-awx-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-FS-1-2-2019-08
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:719090045615:certificate/1d58047f-ed94-4c1c-b5b2-fd6b97ba91dc
+    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-west-2:719090045615:regional/webacl/waf-internal-20220921/c82a371b-f724-4680-a841-b54953b3122d
+    alb.ingress.kubernetes.io/tags: org=ops
+    alb.ingress.kubernetes.io/subnets: subnet-0492b594cc77f7439, subnet-066d09f838a3d75db
+  labels:
+    app: ops-awx-ingress
 spec:
-  type: LoadBalancer
-  externalTrafficPolicy:  {{ .Values.load_balancer.externalTrafficPolicy }}
-  selector:
-    app: {{ .Values.load_balancer.label }}
-    release: {{ .Release.Name }}
-  ports:
-    - name: {{ .Values.load_balancer.ports.http_name }}
-      protocol: {{ .Values.load_balancer.ports.http_protocol }} 
-      port: {{ .Values.load_balancer.ports.http_port }}
-    - name: {{ .Values.load_balancer.ports.http_test_name }}
-      protocol: {{ .Values.load_balancer.ports.http_test_protocol }} 
-      port: {{ .Values.load_balancer.ports.http_test_port }}
-    - name: {{ .Values.load_balancer.ports.https_name }}
-      protocol:  {{ .Values.load_balancer.ports.https_protocol }}
-      port:   {{ .Values.load_balancer.ports.https_port }}
-    - name: {{ .Values.load_balancer.ports.sns_name }}
-      protocol:  {{ .Values.load_balancer.ports.sns_protocol }}
-      port:   {{ .Values.load_balancer.ports.sns_port }}
-    - name: {{ .Values.load_balancer.ports.kibana_name }}
-      protocol:  {{ .Values.load_balancer.ports.kibana_protocol }}
-      port:   {{ .Values.load_balancer.ports.kibana_port }}
-    - name: {{ .Values.load_balancer.ports.dashboard_name }}
-      protocol:  {{ .Values.load_balancer.ports.dashboard_protocol }}
-      port:   {{ .Values.load_balancer.ports.dashboard_port }}
-  loadBalancerSourceRanges:
-     - {{ .Values.load_balancer.loadBalancerSourceRanges }}
+  rules:
+    - host: "alfalfa-dev.stratus.nrel.gov"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80
+    - host: "minio.alfalfa-dev.stratus.nrel.gov"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  number: 9000
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80

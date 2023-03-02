@@ -38,10 +38,30 @@ eksctl create cluster \
     --managed
 ```
 
-This is an example of the output you should see when you create the cluster: 
+# Create a cluster using eksctl in NREL AWS
 
-```TODO 
+There are few changes to be made with the EKS cluster setup when deploying it to NREL internal AWS. 
+* The private subnets should be used 
+* Change to enable --node-private-networking
+
 ```
+eksctl create cluster \
+    --name alfalfa-dev \
+    --version 1.22 \
+    --region us-west-2 \
+    --nodegroup-name standard-workers-dev \
+    --node-type t2.xlarge\
+    --nodes 1 \
+    --nodes-min 1 \
+    --nodes-max 8 \
+    --asg-access \
+    --ssh-access \
+    --ssh-public-key ~/.ssh/id_rsa.pub \
+    --vpc-private-subnets=subnet-066d09f838a3d75db,subnet-0492b594cc77f7439 \
+    --node-private-networking \
+    --managed
+```
+
 
 ## Connecting to your cluster using kubectl
 
