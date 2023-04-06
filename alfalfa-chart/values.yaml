@@ -256,7 +256,7 @@ web:
   label: "web"
   container:
     name: "web"
-    image: "nrel/alfalfa-web:0.4.1"
+    image: "nrel/alfalfa-web:0.5.1"
     resources:
       limits:
         cpu: 1
@@ -290,7 +290,7 @@ worker:
   replicas: 2
   container:
     name: "worker"
-    image: "tijcolem/alfalfa-worker:redis-latency"
+    image: "nrel/alfalfa-worker:0.5.1"
     resources:
       limits:
         cpu: 1
