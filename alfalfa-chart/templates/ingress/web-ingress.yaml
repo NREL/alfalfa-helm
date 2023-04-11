@@ -13,4 +13,7 @@ spec:
           servicePort: {{ .Values.web.container.ports.http }}
         path: /
         pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - {{ .Values.rancher.hostnames.web }}
 {{ end }}

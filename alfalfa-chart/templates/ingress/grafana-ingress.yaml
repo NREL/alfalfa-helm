@@ -13,4 +13,7 @@ spec:
           servicePort: {{ .Values.grafana.container.ports.grafana_port }}
         path: /
         pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - {{ .Values.rancher.hostnames.grafana }}
 {{ end }}
