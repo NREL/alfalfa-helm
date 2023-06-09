@@ -30,7 +30,8 @@ For Azure
 `helm install  alfalfa ./alfalfa-chart --set provider.name=azure`
 
 For Rancher  
-`helm install  alfalfa ./alfalfa-chart --set provider.name=rancher`
+`helm install  alfalfa ./alfalfa-chart --set provider.name=rancher --set storageClass=netappnfs -n <namespace>`
+
 
 For local deployment (e.g. docker-desktop or minikube)
 `helm install alfalfa ./alfalfa-chart --set provider.name=docker-local  --set nginx_https.domain_name=localhost --values ./alfalfa-chart/values_resources_minimal.yaml`
