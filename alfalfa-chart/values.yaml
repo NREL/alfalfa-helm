@@ -15,15 +15,15 @@ env:
     LOGLEVEL: DEBUG
     NODE_ENV: production
     S3_URL: http://minio
-    #S3_URL_EXTERNAL: https://alfalfa-cbri.nrel.gov 
-    #AWS S3 end point url example below. See docs on obtaining url using kubectl 
+    #S3_URL_EXTERNAL: https://alfalfa-cbri.nrel.gov
+    #AWS S3 end point url example below. See docs on obtaining url using kubectl
     S3_URL_EXTERNAL: http://a767c1335c88545b6955157e38eabd0c-1443732694.us-west-2.elb.amazonaws.com:9000
     REDIS_HOST: redis
     S3_BUCKET: alfalfa
     REGION: us-west-1
     INFLUXDB_DB: alfalfa
     INFLUXDB_HOST: influxdb
-    # Need to start influx with this disabled first and then 
+    # Need to start influx with this disabled first and then
     # can set to true
     INFLUXDB_HTTP_AUTH_ENABLED: false
     HISTORIAN_ENABLE: false
@@ -38,7 +38,7 @@ env:
 
 # Set to google, aws, azure or docker-local
 # docker-local is the docker-desktop and used for local deployments
-provider: 
+provider:
   name: "aws"
 
 # Specifc values for rancher deployments only
@@ -59,7 +59,7 @@ tags:
   log_stack: false
 
 cluster:
-  name: "alfalfa" 
+  name: "alfalfa"
 
 # rancher uses netappnfs for storageClass
 storageClass: "ssd"
@@ -112,7 +112,7 @@ grafana:
   label: "grafana"
   container:
     name: "grafana"
-    image: "grafana/grafana:8.5.4"
+    image: "ghcr.io/nrel/alfalfa/grafana:0.6.0"
     resources:
       limits:
         cpu: 1
@@ -147,16 +147,16 @@ load_balancer:
   externalTrafficPolicy: "Local"
   label: "nginx-ingress"
   ports:
-    http_name: "http" 
+    http_name: "http"
     http_port: 80
     http_protocol: "TCP"
-    http_test_name: "http-test" 
+    http_test_name: "http-test"
     http_test_port: 29043
     http_test_protocol: "TCP"
     https_name: "https"
     https_port: 443
     https_protocol: "TCP"
-    sns_name: "sns" 
+    sns_name: "sns"
     sns_port: 9000
     sns_protocol: "TCP"
     kibana_name: "kibana"
@@ -256,7 +256,7 @@ web:
   label: "web"
   container:
     name: "web"
-    image: "nrel/alfalfa-web:0.5.1"
+    image: "ghcr.io/nrel/alfalfa/web:0.6.0"
     resources:
       limits:
         cpu: 1
@@ -285,12 +285,12 @@ nginx_dashboard:
       http: 8081
 
 worker:
-  name: "worker" 
-  label: "worker" 
-  replicas: 2
+  name: "worker"
+  label: "worker"
+  replicas: 5
   container:
     name: "worker"
-    image: "nrel/alfalfa-worker:0.5.1"
+    image: "ghcr.io/nrel/alfalfa/worker:0.6.0"
     resources:
       limits:
         cpu: 1
@@ -337,11 +337,11 @@ elasticsearch:
 
 filebeat:
   managedServiceAccount: false
-  extraVolumeMounts: 
+  extraVolumeMounts:
     - name: varlibdockeroverlay2
       mountPath: /var/lib/docker/overlay2
       readOnly: true
-  extraVolumes: 
+  extraVolumes:
     - hostPath:
         path: /var/lib/docker/overlay2
       name: varlibdockeroverlay2
