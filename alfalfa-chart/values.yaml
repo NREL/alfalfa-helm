@@ -112,7 +112,7 @@ grafana:
   label: "grafana"
   container:
     name: "grafana"
-    image: "grafana/grafana:8.5.4"
+    image: "ghcr.io/nrel/alfalfa/grafana:0.6.0"
     resources:
       limits:
         cpu: 1
@@ -256,7 +256,7 @@ web:
   label: "web"
   container:
     name: "web"
-    image: "nrel/alfalfa-web:0.5.1"
+    image: "ghcr.io/nrel/alfalfa/web:0.6.0"
     resources:
       limits:
         cpu: 1
@@ -290,7 +290,7 @@ worker:
   replicas: 2
   container:
     name: "worker"
-    image: "nrel/alfalfa-worker:0.5.1"
+    image: "ghcr.io/nrel/alfalfa/worker:0.6.0"
     resources:
       limits:
         cpu: 1
