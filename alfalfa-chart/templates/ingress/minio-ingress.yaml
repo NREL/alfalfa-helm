@@ -1,16 +1,20 @@
 {{ if eq .Values.provider.name "rancher" }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Values.minio.name }}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 10000m
 spec:
   rules:
   - host:  {{ .Values.rancher.hostnames.minio }}
     http:
       paths:
       - backend:
-          serviceName: {{ .Values.minio.name }}
-          servicePort: {{ .Values.minio.container.ports.s3 }}
+          service:
+            name: {{ .Values.minio.name }}
+            port:
+              number: {{ .Values.minio.container.ports.s3 }}
         path: /
         pathType: ImplementationSpecific
   tls:
