@@ -59,8 +59,8 @@ spec:
                   key:  INFLUXDB_ADMIN_PASSWORD
             - name: NODE_ENV
               value: {{ .Values.env.public.NODE_ENV }}
-            - name: JOB_QUEUE_URL
-              value: {{ .Values.env.public.JOB_QUEUE_URL }}
+            - name: JOB_QUEUE
+              value: {{ .Values.env.public.JOB_QUEUE }}
             - name: MONGO_URL
               value: {{ .Values.env.public.MONGO_URL }}
             - name: MONGO_DB_NAME

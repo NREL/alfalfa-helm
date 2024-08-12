@@ -9,8 +9,8 @@ metadata:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
     alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-FS-1-2-2019-08
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:<aws-accountid>:certificate/1d58047f-ed94-4c1c-b5b2-fd6b97ba91dc
-    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-west-2:<aws-accountid>:regional/webacl/waf-internal-20220921/c82a371b-f724-4680-a841-b54953b3122d
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:719090045615:certificate/1d58047f-ed94-4c1c-b5b2-fd6b97ba91dc
+    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-west-2:719090045615:regional/webacl/waf-internal-20220921/c82a371b-f724-4680-a841-b54953b3122d
     alb.ingress.kubernetes.io/tags: org=ops
     alb.ingress.kubernetes.io/subnets: subnet-0492b594cc77f7439, subnet-066d09f838a3d75db
   labels:

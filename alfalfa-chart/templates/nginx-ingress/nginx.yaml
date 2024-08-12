@@ -49,6 +49,9 @@ spec:
             - name: {{ .Values.nginx_https.name }}
               mountPath: /etc/nginx/conf.d/alfalfa-web-https.conf
               subPath: alfalfa-web-https.conf
+            - name: {{ .Values.nginx_https.name }}
+              mountPath: /etc/nginx/conf.d/alfalfa-minio-https.conf
+              subPath: alfalfa-minio-https.conf
               {{ end }}
         - name: {{ .Values.certbot.container.name }}
           image: {{ .Values.certbot.container.image }}
