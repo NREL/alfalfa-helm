@@ -63,17 +63,9 @@ The following table lists common configurable parameters of the alfalfa chart an
 
 `helm install alfalfa alfalfa/alfalfa --set mongodb.persistence.size=200Gi`
 
-Alternatively, you can create a `values.yaml` file you pass to helm via the `-values`
+Alternatively, you can create a `values.yaml` file you pass to helm via the `--values`
 
-
-Parameter | Description | Default
---------- | ----------- | -------
-mongo.persistence.size | Size of the volume for MongoDB | 10Gi |
-mongo.persistence.size | Size of the volume for MongoDB | 10Gi |
-minio.persistence.size | Size of the volume for Minio | 100Gi |
-worker.replicas | Number of worker pods that run the simulations | 2 |
-web.container.image   | Container to run the web front-end. Can use a custom image to override default | nrel/alfalfa-web:0.2.0 |
-worker.container.image   | Container to run the worker. Can use a custom image to override default | nrel/alfalfa-worker:0.2.0 |
+For information about what each value does see the [VALUES.md](VALUES.md).
 
 
 ## Accessing alfalfa
