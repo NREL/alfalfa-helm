@@ -1,0 +1,80 @@
+{{ if and .Values.historian.enabled .Values.grafana.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "alfalfa.fullname" . }}-grafana
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "alfalfa.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: grafana
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        {{- include "alfalfa.labels" . | nindent 8 }}
+        app.kubernetes.io/component: grafana
+    spec:
+      initContainers:
+        - name: init-wait-for-db
+          image: alpine
+          command: ["/bin/sh", "-c", "for i in $(seq 1 300); do nc -zvw1 {{ include "alfalfa.influxdb.host" . }} {{ include "alfalfa.influxdb.port" . }} && exit 0 || sleep 3; done; exit 1"]
+      containers:
+        - name: grafana
+          image: {{ .Values.grafana.container.image }}
+          resources:
+            {{- toYaml .Values.grafana.container.resources | nindent 12 }}
+          ports:
+            - containerPort:  {{ .Values.grafana.container.ports.http }}
+              name: http
+          env:
+            - name: INFLUXDB_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alfalfa.fullname" . }}-influxdb
+                  key:  username
+            - name: INFLUXDB_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alfalfa.fullname" . }}-influxdb
+                  key:  password
+            - name: INFLUXDB_DB
+              value: {{ include "alfalfa.influxdb.database" . | quote }}
+            - name: INFLUXDB_HOST
+              value: {{ include "alfalfa.influxdb.host" . | quote }}
+            - name: GF_SECURITY_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alfalfa.fullname" . }}-grafana
+                  key:  GF_SECURITY_ADMIN_USER
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alfalfa.fullname" . }}-grafana
+                  key:  GF_SECURITY_ADMIN_PASSWORD
+          volumeMounts:
+            - name: grafana-config
+              mountPath: /etc/grafana/config.ini
+              subPath: config.ini
+            - name: grafana-config
+              mountPath: /etc/grafana/provisioning/dashboards/all.yaml
+              subPath: provisioning_dashboard.yaml
+            - name: grafana-config
+              mountPath: /etc/grafana/provisioning/datasources/all.yaml
+              subPath: provisioning_data.yaml
+            - name: grafana-config
+              mountPath: /var/lib/grafana/dashboards/default_dashboard.yaml
+              subPath: default_dashboard.yaml
+      volumes:
+        - name: grafana-config
+          configMap:
+            name: {{ include "alfalfa.fullname" . }}-grafana
+{{ end }}
+

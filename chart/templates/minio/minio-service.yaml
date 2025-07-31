@@ -1,0 +1,24 @@
+{{- if .Values.minio.enabled -}}
+{{- $fullName := include "alfalfa.fullname" . -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-minio
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+    app.kubernetes.io/component: minio
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.minio.service.ports.api }}
+      targetPort: api
+      protocol: TCP
+      name: api
+    - port: {{ .Values.minio.service.ports.console }}
+      targetPort: console
+      protocol: TCP
+      name: console
+  selector:
+    {{- include "alfalfa.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: minio
+{{- end }}

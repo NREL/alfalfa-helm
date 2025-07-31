@@ -1,0 +1,17 @@
+{{ if .Values.historian.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "alfalfa.fullname" . }}-influxdb
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "alfalfa.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: influxdb
+  ports:
+    - name: influxdb
+      protocol: TCP
+      port: {{ .Values.influxdb.service.ports.influxdb }}
+      targetPort: influxdb
+{{ end }}

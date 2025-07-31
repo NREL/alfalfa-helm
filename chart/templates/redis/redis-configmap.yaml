@@ -1,0 +1,22 @@
+{{- if .Values.redis.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "alfalfa.fullname" . }}-redis-config
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+data:
+  redis.conf: |
+    # Basic Redis configuration
+    bind 0.0.0.0
+    port {{ .Values.redis.container.ports.redis }}
+    
+    # Persistence
+    appendonly yes
+    save 60 1
+    
+    {{- if .Values.config.redis.auth.enabled }}
+    # Include auth config from secret
+    include /etc/redis/auth/redis-auth.conf
+    {{- end }}
+{{- end }}

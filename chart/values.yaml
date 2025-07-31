@@ -1,0 +1,215 @@
+# Ingress configuration for application services
+ingress:
+  enabled: true
+  className: "nginx"  # Assumes nginx-ingress is installed separately
+  annotations: {}
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    web:
+      host: alfalfa.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+    grafana:
+      host: grafana.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+    minio:
+      host: minio.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    enabled: false
+    secretName: ""
+    # Example TLS configuration:
+    # enabled: true
+    # secretName: alfalfa-tls
+    # This would cover all ingresses (web, grafana, minio)
+
+# External service configurations (override subchart defaults when set)
+config:
+  mongodb:
+    # connectionUrl overrides other connection settings. It is not compatible with the included mongodb instance
+    connectionUrl:
+    host:
+    port:
+    database: alfalfa
+    # Optional authentication
+    auth:
+      enabled: false
+      username:
+      password:
+  
+  redis:
+    # connectionUrl overrides other connection settings. It is not compatible with the included redis instance
+    connectionUrl:
+    host:
+    port:
+    # Optional authentication
+    auth:
+      enabled: false
+      password:
+    jobQueueName: "Alfalfa Job Queue"
+  
+  s3:
+    host:
+    port:
+    bucket:
+    region:
+    # External URL for browser access (used for presigned URLs)
+    externalUrl:
+    # Whether to use SSL/TLS
+    secure:
+    # Authentication credentials
+    auth:
+      accessKey: "user"
+      secretKey: "changeme-minio-password"
+
+  influxdb:
+    host:
+    port:
+    auth:
+      username:
+      password:
+    database: "alfalfa"
+
+  grafana:
+    auth:
+      username: admin
+      password: changeme-grafana-password
+
+historian:
+  enabled: true
+  # Additional historian configuration would go here
+
+web:
+  container:
+    image: "ghcr.io/nrel/alfalfa/web:kubernetes_fixes"
+    resources:
+      requests:
+        cpu: 0.5
+        memory: "256Mi"
+    env:
+      NODE_ENV: "PRODUCTION" 
+    ports:
+      http: 80
+
+worker:
+  replicas: 5
+  container:
+    image: "ghcr.io/nrel/alfalfa/worker:kubernetes_fixes"
+    resources:
+      requests:
+        cpu: 0.5
+        memory: "1Gi"
+    env:
+      LOGLEVEL: INFO
+
+mongodb:
+  enabled: true
+  container:
+    name: "mongodb"
+    image: "mongo:7-jammy"
+    ports:
+      mongodb: 27017
+    resources:
+      requests:
+        cpu: 0.25
+        memory: "512Mi"
+  service:
+    ports:
+      mongodb: 27017
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass:
+    accessModes:
+      - "ReadWriteOnce"
+
+influxdb:
+  enabled: true
+  container:
+    name: "influxdb"
+    image: "influxdb:1.8"
+    resources:
+      requests:
+        cpu: 0.1
+        memory: "256Mi"
+    ports:
+      influxdb: 8086
+  service:
+    ports:
+      influxdb: 8086
+  persistence:
+    storageClass:
+    enabled: true
+    size: 10Gi
+    accessModes:
+      - "ReadWriteOnce"
+
+grafana:
+  enabled: true
+  container:
+    image: "ghcr.io/nrel/alfalfa/grafana:migrate_pyenergyplus"
+    resources:
+      requests:
+        cpu: 0.1
+        memory: "128Mi"
+    ports:
+      http: 3000
+  service:
+    ports:
+      http: 80
+  ingress:
+    enabled: true
+    host: grafana.example.com
+
+redis:
+  enabled: true
+  container:
+    name: "redis"
+    image: "redis:7-alpine"
+    ports:
+      redis: 6379
+    resources:
+      requests:
+        cpu: 0.5
+        memory: "256Mi"
+  service:
+    ports:
+      redis: 6379
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: ""
+    accessModes:
+      - "ReadWriteOnce"
+
+minio:
+  enabled: true
+  container:
+    name: "minio"
+    image: "minio/minio:RELEASE.2024-04-18T19-09-19Z"
+    ports:
+      api: 9000
+      console: 9001
+    resources:
+      requests:
+        cpu: 0.25
+        memory: "512Mi"
+  service:
+    ports:
+      api: 9000
+      console: 9001
+  defaultBuckets: "alfalfa"
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+    accessModes:
+      - "ReadWriteOnce"
+  # MinIO Client (mc) configuration for bucket creation
+  mc:
+    image: "minio/mc:RELEASE.2024-04-18T16-45-29Z"

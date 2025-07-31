@@ -1,0 +1,111 @@
+{{- if .Values.redis.enabled }}
+{{- $fullName := include "alfalfa.fullname" . -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $fullName }}-redis
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ $fullName }}-redis
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "alfalfa.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: redis
+  template:
+    metadata:
+      labels:
+        {{- include "alfalfa.labels" . | nindent 8 }}
+        app.kubernetes.io/component: redis
+    spec:
+      containers:
+        - name: {{ .Values.redis.container.name }}
+          image: {{ .Values.redis.container.image }}
+          ports:
+            - name: redis
+              containerPort: {{ .Values.redis.container.ports.redis }}
+              protocol: TCP
+          env:
+            {{- if .Values.config.redis.auth.enabled }}
+            - name: REDIS_PASSWORD
+              value: {{ include "alfalfa.redis.auth.password" . | quote }}
+            {{- end }}
+          command:
+            - redis-server
+            - /etc/redis/redis.conf
+          resources:
+            {{- toYaml .Values.redis.container.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ $fullName }}-redis-data
+              mountPath: /data
+            - name: redis-config
+              mountPath: /etc/redis
+              readOnly: true
+            {{- if .Values.config.redis.auth.enabled }}
+            - name: redis-auth-config
+              mountPath: /etc/redis/auth
+              readOnly: true
+            {{- end }}
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                {{- if .Values.config.redis.auth.enabled }}
+                - -a
+                - $(REDIS_PASSWORD)
+                {{- end }}
+                - ping
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                {{- if .Values.config.redis.auth.enabled }}
+                - -a
+                - $(REDIS_PASSWORD)
+                {{- end }}
+                - ping
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+      volumes:
+        - name: redis-config
+          configMap:
+            name: {{ include "alfalfa.fullname" . }}-redis-config
+        {{- if .Values.config.redis.auth.enabled }}
+        - name: redis-auth-config
+          secret:
+            secretName: {{ include "alfalfa.fullname" . }}-redis-auth-config
+        {{- end }}
+        {{- if not .Values.redis.persistence.enabled }}
+        - name: {{ $fullName }}-redis-data
+          emptyDir: {}
+        {{- end }}
+  {{- if .Values.redis.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ $fullName }}-redis-data
+        labels:
+          {{- include "alfalfa.labels" . | nindent 10 }}
+      spec:
+        accessModes:
+          {{- range .Values.redis.persistence.accessModes }}
+          - {{ . | quote }}
+          {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.redis.persistence.size | quote }}
+        {{- if .Values.redis.persistence.storageClass }}
+        {{- if (eq "-" .Values.redis.persistence.storageClass) }}
+        storageClassName: ""
+        {{- else }}
+        storageClassName: "{{ .Values.redis.persistence.storageClass }}"
+        {{- end }}
+        {{- end }}
+  {{- end }}
+{{- end }}

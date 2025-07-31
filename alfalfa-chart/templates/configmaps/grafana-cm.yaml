@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{  .Values.grafana.name  }}
-data:
-{{ (tpl (.Files.Glob "configmaps/grafana/*").AsConfig . ) | indent 2  }}

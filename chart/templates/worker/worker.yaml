@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "alfalfa.fullname" . }}-worker
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.worker.replicas }}
+  selector:
+    matchLabels:
+      {{- include "alfalfa.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: worker
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        {{- include "alfalfa.labels" . | nindent 8 }}
+        app.kubernetes.io/component: worker
+    spec:
+      containers:
+        - name:  worker
+          image: {{ .Values.worker.container.image  }}
+          resources:
+            {{- toYaml .Values.worker.container.resources | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ include "alfalfa.fullname" . }}-influxdb
+          env:
+            {{- range $name, $value := .Values.worker.container.env }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alfalfa.fullname" . }}-s3
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alfalfa.fullname" . }}-s3
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alfalfa.fullname" . }}-redis
+                  key: connectionUrl
+            - name: JOB_QUEUE
+              value: {{ .Values.config.redis.jobQueueName | quote }}
+            - name: S3_URL
+              value: {{ include "alfalfa.s3.url" . | quote }}
+            - name: S3_BUCKET
+              value: {{ include "alfalfa.s3.bucket" . | quote }}
+            - name: S3_REGION
+              value: {{ include "alfalfa.s3.region" . | quote }}
+            - name: MONGO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alfalfa.fullname" . }}-mongodb
+                  key: connectionUrl
+          {{- if .Values.historian.enabled }}
+            - name: INFLUXDB_DB
+              value: {{ include "alfalfa.influxdb.database" . }}
+            - name: INFLUXDB_HOST
+              value: {{ include "alfalfa.influxdb.host" . }}
+            - name: INFLUXDB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alfalfa.fullname" . }}-influxdb
+                  key: username
+            - name: INFLUXDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alfalfa.fullname" . }}-influxdb
+                  key: password
+          {{- end}}
+            - name: HISTORIAN_ENABLE
+              value: {{ .Values.historian.enabled | quote }}
