@@ -1,0 +1,95 @@
+{{- if .Values.mongodb.enabled }}
+{{- $fullName := include "alfalfa.fullname" . -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $fullName }}-mongodb
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ $fullName }}-mongodb
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "alfalfa.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mongodb
+  template:
+    metadata:
+      labels:
+        {{- include "alfalfa.labels" . | nindent 8 }}
+        app.kubernetes.io/component: mongodb
+    spec:
+      containers:
+        - name: {{ .Values.mongodb.container.name }}
+          image: {{ .Values.mongodb.container.image }}
+          ports:
+            - name: mongodb
+              containerPort: {{ .Values.mongodb.container.ports.mongodb }}
+              protocol: TCP
+          env:
+            {{- if .Values.config.mongodb.auth.enabled }}
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $fullName }}-mongodb
+                  key: username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $fullName }}-mongodb
+                  key: password
+            {{- end }}
+            - name: MONGO_INITDB_DATABASE
+              value: {{ include "alfalfa.mongodb.database" . }}
+          resources:
+            {{- toYaml .Values.mongodb.container.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ $fullName }}-mongodb-data
+              mountPath: /data/db
+          livenessProbe:
+            exec:
+              command:
+                - mongosh
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - mongosh
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+  {{- if .Values.mongodb.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ $fullName }}-mongodb-data
+        labels:
+          {{- include "alfalfa.labels" . | nindent 10 }}
+      spec:
+        accessModes:
+          {{- range .Values.mongodb.persistence.accessModes }}
+          - {{ . | quote }}
+          {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.mongodb.persistence.size | quote }}
+        {{- if .Values.mongodb.persistence.storageClass }}
+        {{- if (eq "-" .Values.mongodb.persistence.storageClass) }}
+        storageClassName: ""
+        {{- else }}
+        storageClassName: "{{ .Values.mongodb.persistence.storageClass }}"
+        {{- end }}
+        {{- end }}
+  {{- else }}
+      volumes:
+        - name: {{ $fullName }}-mongodb-data
+          emptyDir: {}
+  {{- end }}
+{{- end }}

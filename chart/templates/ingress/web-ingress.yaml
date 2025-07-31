@@ -1,0 +1,40 @@
+{{- if and .Values.ingress.enabled .Values.ingress.hosts.web -}}
+{{- $fullName := include "alfalfa.fullname" . -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-web
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- else }}
+  ingressClassName: nginx
+  {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.hosts.web.host | quote }}
+      {{- if .Values.ingress.tls.secretName }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+      {{- else }}
+      secretName: {{ $fullName }}-web-tls
+      {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.hosts.web.host | quote }}
+      http:
+        paths:
+          {{- range .Values.ingress.hosts.web.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ printf "%s-web" (include "alfalfa.fullname" $) }}
+                port:
+                  name: http
+          {{- end }}
+{{- end }}

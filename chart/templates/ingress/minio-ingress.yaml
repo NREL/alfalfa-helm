@@ -1,0 +1,43 @@
+{{- if and .Values.ingress.enabled .Values.ingress.hosts.minio .Values.minio.enabled -}}
+{{- $fullName := include "alfalfa.fullname" . -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-minio
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- else }}
+  ingressClassName: nginx
+  {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.hosts.minio.host | quote }}
+      {{- if .Values.ingress.tls.secretName }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+      {{- else }}
+      secretName: {{ $fullName }}-minio-tls
+      {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.hosts.minio.host | quote }}
+      http:
+        paths:
+          {{- range .Values.ingress.hosts.minio.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}-minio
+                port:
+                  name: api
+          {{- end }}
+{{- end }}

@@ -1,0 +1,40 @@
+{{- if and .Values.ingress.enabled .Values.ingress.hosts.grafana .Values.grafana.enabled .Values.historian.enabled -}}
+{{- $fullName := include "alfalfa.fullname" . -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-grafana
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- else }}
+  ingressClassName: nginx
+  {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.hosts.grafana.host | quote }}
+      {{- if .Values.ingress.tls.secretName }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+      {{- else }}
+      secretName: {{ $fullName }}-grafana-tls
+      {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.hosts.grafana.host | quote }}
+      http:
+        paths:
+          {{- range .Values.ingress.hosts.grafana.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ printf "%s-grafana" (include "alfalfa.fullname" $) }}
+                port:
+                  name: http
+          {{- end }}
+{{- end }}

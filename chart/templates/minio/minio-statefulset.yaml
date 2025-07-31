@@ -1,0 +1,101 @@
+{{- if .Values.minio.enabled -}}
+{{- $fullName := include "alfalfa.fullname" . -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $fullName }}-minio
+  labels:
+    {{- include "alfalfa.labels" . | nindent 4 }}
+    app.kubernetes.io/component: minio
+spec:
+  replicas: 1
+  serviceName: {{ $fullName }}-minio
+  selector:
+    matchLabels:
+      {{- include "alfalfa.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: minio
+  template:
+    metadata:
+      labels:
+        {{- include "alfalfa.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: minio
+    spec:
+      containers:
+        - name: {{ .Values.minio.container.name }}
+          image: {{ .Values.minio.container.image }}
+          command:
+            - minio
+            - server
+            - /data
+            - --address
+            - :{{ .Values.minio.container.ports.api }}
+            - --console-address
+            - :{{ .Values.minio.container.ports.console }}
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $fullName }}-s3
+                  key: AWS_ACCESS_KEY_ID
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $fullName }}-s3
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: MINIO_DEFAULT_BUCKETS
+              value: {{ include "alfalfa.s3.bucket" . | quote }}
+          ports:
+            - name: api
+              containerPort: {{ .Values.minio.container.ports.api }}
+              protocol: TCP
+            - name: console
+              containerPort: {{ .Values.minio.container.ports.console }}
+              protocol: TCP
+          volumeMounts:
+            - name: {{ $fullName }}-minio-data
+              mountPath: /data
+          resources:
+            {{- toYaml .Values.minio.container.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: api
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: api
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+  {{- if .Values.minio.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ $fullName }}-minio-data
+        labels:
+          {{- include "alfalfa.labels" . | nindent 10 }}
+      spec:
+        accessModes:
+          {{- range .Values.minio.persistence.accessModes }}
+          - {{ . | quote }}
+          {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.minio.persistence.size | quote }}
+        {{- if .Values.minio.persistence.storageClass }}
+        {{- if (eq "-" .Values.minio.persistence.storageClass) }}
+        storageClassName: ""
+        {{- else }}
+        storageClassName: {{ .Values.minio.persistence.storageClass | quote }}
+        {{- end }}
+        {{- end }}
+  {{- else }}
+      volumes:
+        - name: {{ $fullName }}-minio-data
+          emptyDir: {}
+  {{- end }}
+{{- end }}
