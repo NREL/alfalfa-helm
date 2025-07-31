@@ -16,7 +16,7 @@ This repository includes automated release workflows. Charts are automatically p
 
 - **GitHub Releases**: Download chart packages (.tgz) directly from releases
 - **Helm Repository**: Available at `https://nrel.github.io/alfalfa-helm`
-- **OCI Registry**: Available at `oci://ghcr.io/nrel/helm-charts/alfalfa`
+- **OCI Registry**: Available at `oci://ghcr.io/nrel/alfalfa-helm/alfalfa`
 
 ### Using Released Charts
 
@@ -27,7 +27,7 @@ helm repo update
 helm install alfalfa alfalfa/alfalfa
 
 # From OCI registry
-helm install alfalfa oci://ghcr.io/nrel/helm-charts/alfalfa
+helm install alfalfa oci://ghcr.io/nrel/alfalfa-helm/alfalfa
 
 # From GitHub release
 curl -LO https://github.com/NREL/alfalfa-helm/releases/latest/download/alfalfa-<version>.tgz
