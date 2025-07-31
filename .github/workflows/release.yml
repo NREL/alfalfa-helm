@@ -38,7 +38,7 @@ jobs:
           cd alfalfa-chart
           helm dependency build
           cd ..
-          helm package alfalfa-chart --destination ./packages
+          helm package alfalfa --destination ./packages
 
       - name: Upload Chart Packages to Release
         uses: softprops/action-gh-release@v1
