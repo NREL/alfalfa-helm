@@ -48,8 +48,7 @@ jobs:
       - name: Push Charts to OCI Registry
         run: |
           for chart in packages/*.tgz; do
-            chart_name=$(basename "$chart" .tgz)
-            helm push "$chart" oci://ghcr.io/${{ github.repository_owner }}/alfalfa-helm
+            helm push "$chart" oci://ghcr.io/nrel/alfalfa-helm
           done
 
       - name: Generate Chart Index

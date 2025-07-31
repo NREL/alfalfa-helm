@@ -4,7 +4,7 @@
 
 ## Chart Components
 
-The `alfalfa-chart/` contains the complete Alfalfa application:
+The `chart/` contains the complete Alfalfa application:
 - **Application Services**: Web UI, Worker processes
 - **Data Stores**: MongoDB, Redis, MinIO (S3-compatible storage), InfluxDB  
 - **Monitoring**: Grafana dashboards
@@ -46,7 +46,7 @@ helm install alfalfa ./alfalfa-<version>.tgz
 Install Alfalfa with default settings:
 
 ```bash
-helm upgrade --install alfalfa ./alfalfa-chart --namespace alfalfa --create-namespace
+helm upgrade --install alfalfa ./chart --namespace alfalfa --create-namespace
 ```
 
 ## Uninstalling the Chart
@@ -59,7 +59,7 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-The following table lists common configurable parameters of the alfalfa chart and their default values. This list is not representative of the full list. You can override any of the [values.yaml](alfalfa-chart/values.yaml) by specify the parameter name using the `--set key=value[,key=value]` argument to `helm install`. For example, to change the data storage for mongo from the default 100GB to 200GB, you would run this install command:
+The following table lists common configurable parameters of the alfalfa chart and their default values. This list is not representative of the full list. You can override any of the [values.yaml](chart/values.yaml) by specify the parameter name using the `--set key=value[,key=value]` argument to `helm install`. For example, to change the data storage for mongo from the default 100GB to 200GB, you would run this install command:
 
 `helm install alfalfa alfalfa/alfalfa --set mongodb.persistence.size=200Gi`
 
