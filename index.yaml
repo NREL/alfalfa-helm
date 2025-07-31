@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  alfalfa:
+  - apiVersion: v2
+    appVersion: 0.5.1
+    created: "2025-07-31T19:16:07.129267061Z"
+    description: A Helm chart for the Alfalfa application
+    digest: eccc25542041d450a7d51f63b277f50ea45c2ca7a25acfc8c95645ad6894b0ec
+    name: alfalfa
+    type: application
+    urls:
+    - https://github.com/NREL/alfalfa-helm/releases/download/v1.0-test-5/alfalfa-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-07-31T19:16:07.128142833Z"
