@@ -27,18 +27,8 @@ jobs:
         with:
           version: '3.14.0'
 
-      - name: Add Helm repositories
-        run: |
-          helm repo add elastic https://helm.elastic.co
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo update
-
       - name: Package Alfalfa Chart
-        run: |
-          cd alfalfa-chart
-          helm dependency build
-          cd ..
-          helm package alfalfa --destination ./packages
+        run: helm package chart --destination ./packages
 
       - name: Upload Chart Packages to Release
         uses: softprops/action-gh-release@v1
