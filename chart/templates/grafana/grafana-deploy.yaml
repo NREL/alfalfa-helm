@@ -70,7 +70,7 @@ spec:
               mountPath: /etc/grafana/provisioning/datasources/all.yaml
               subPath: provisioning_data.yaml
             - name: grafana-config
-              mountPath: /var/lib/grafana/dashboards/default_dashboard.yaml
+              mountPath: "/var/lib/grafana/dashboards/Simple TS Dashboard.json"
               subPath: default_dashboard.yaml
       volumes:
         - name: grafana-config

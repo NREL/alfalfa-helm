@@ -99,7 +99,7 @@ web:
 worker:
   replicas: 5
   container:
-    image: "ghcr.io/nrel/alfalfa/worker:kubernetes_fixes"
+    image: "ghcr.io/nrel/alfalfa/worker:sha-99d5a40"
     resources:
       requests:
         cpu: 0.5
@@ -152,7 +152,7 @@ influxdb:
 grafana:
   enabled: true
   container:
-    image: "ghcr.io/nrel/alfalfa/grafana:migrate_pyenergyplus"
+    image: "grafana/grafana:8.5.4"
     resources:
       requests:
         cpu: 0.1
