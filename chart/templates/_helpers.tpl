@@ -70,10 +70,6 @@ mongodb://{{ include "alfalfa.mongodb.host" . }}:{{ include "alfalfa.mongodb.por
 {{- end }}
 
 {{/*
-{{- end -}}
-{{- end }}
-
-{{/*
 Common labels
 */}}
 {{- define "alfalfa.labels" -}}
@@ -157,10 +153,14 @@ http://{{ include "alfalfa.s3.host" . }}:{{ include "alfalfa.s3.port" . }}
 S3 external URL (for browser access)
 */}}
 {{- define "alfalfa.s3.externalUrl" -}}
-{{- if and .Values.minio.enabled .Values.ingress.hosts.minio.host -}}
+{{- if and .Values.minio.enabled .Values.ingress.enabled .Values.ingress.hosts.minio.host -}}
+{{- if .Values.ingress.hosts.minio.https -}}
+https://{{ .Values.ingress.hosts.minio.host }}
+{{- else -}}    
 http://{{ .Values.ingress.hosts.minio.host }}
+{{- end -}}
 {{- else -}}
-{{ .Values.config.s3.externalUrl }}
+{{ .Values.config.s3.externalUrl | default (include "alfalfa.s3.url" .) }}
 {{- end -}}
 {{- end }}
 

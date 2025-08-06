@@ -35,6 +35,7 @@ Controls external access to Alfalfa services through Kubernetes ingress resource
 | `ingress.hosts.web.paths[].pathType` | Path matching type | `Prefix` | No |
 | `ingress.hosts.grafana.host` | Hostname for Grafana dashboard | `grafana.example.com` | Yes |
 | `ingress.hosts.minio.host` | Hostname for MinIO console | `minio.example.com` | Yes |
+| `ingress.hosts.minio.https` | Whether to use HTTPS for MinIO external URL | `false` | No |
 | `ingress.tls.enabled` | Enable TLS/SSL for ingresses | `false` | No |
 | `ingress.tls.secretName` | Secret containing TLS certificates | `""` | No |
 
